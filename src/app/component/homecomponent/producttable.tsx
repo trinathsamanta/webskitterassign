@@ -23,7 +23,7 @@ export default function ProductTable() {
     products: [],
     loading: true,
     visibleProductId: null,
-    focusedIndex: 0,
+    focusedIndex: -1,
   });
 
   const { products, loading, visibleProductId, focusedIndex } = state;
@@ -43,11 +43,11 @@ export default function ProductTable() {
     }
   };
 
-  const handleClick = (id: number) => {
+  const handleClick = (id: number, index: number) => {
     SetState((prev) => ({
       ...prev,
       visibleProductId: visibleProductId === id ? null : id,
-      //   focusedIndex: 0,
+      focusedIndex: visibleProductId === id ? -1 : index,
     }));
   };
 
@@ -89,9 +89,13 @@ export default function ProductTable() {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (focusedIndex === -1) return;
     const numCols = 5;
-    let newIndex = focusedIndex !== -1 ? focusedIndex : 0;
+    let newIndex = focusedIndex;
     // console.log(focusedIndex);
+    const getproductdropindex = products.findIndex(
+      (product) => product.id === visibleProductId
+    );
     switch (event.key) {
       case "ArrowUp":
         if (focusedIndex < numCols) {
@@ -169,7 +173,7 @@ export default function ProductTable() {
                   cursor: "pointer",
                   color: visibleProductId === product.id ? "black" : "white",
                 }}
-                onClick={() => handleClick(product.id)}
+                onClick={() => handleClick(product.id, index)}
                 tabIndex={index}
               >
                 {visibleProductId === product.id ? (
